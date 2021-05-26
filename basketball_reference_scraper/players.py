@@ -38,7 +38,7 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
         df = df.reset_index().drop('index', axis=1)
         return df
 
-def get_game_logs(_name, start_date, end_date, playoffs=False, ask_matches=True):
+def get_game_logs(_name, start_date, end_date, playoffs=False, ask_matches=True, advanced = True):
     name = lookup(_name, ask_matches)
     suffix = get_player_suffix(name).replace('/', '%2F').replace('.html', '')
     start_date_str = start_date
@@ -47,9 +47,15 @@ def get_game_logs(_name, start_date, end_date, playoffs=False, ask_matches=True)
     end_date = pd.to_datetime(end_date)
     years = list(range(start_date.year, end_date.year+2))
     if playoffs:
-        selector = 'div_pgl_basic_playoffs'
+        if advanced:
+            selector = 'div_pgl_advanced_playoffs'
+        else:
+            selector = 'div_pgl_basic_playoffs'
     else:
-        selector = 'div_pgl_basic'
+        if advanced:
+            selector = 'div_pgl_advanced'
+        else:
+            selector = 'div_pgl_basic'
     final_df = None
     for year in years:
         r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}%2Fgamelog%2F{year}%2F&div={selector}')
